@@ -1,0 +1,84 @@
+AIRLINES           age     avg-pre-owned price
+alaska airlines    1932    5000
+allegiant air      1997    6000
+american airlines  1926    7000
+avelo airlines     1987    8000
+breeze airways     2018    10000
+
+currencies = {
+    "United States": "USD",
+    "United Kingdom": "GBP",
+    "Canada": "CAD",
+    "Australia": "AUD",
+}
+Cost per nm = Total Cost / Distance in nm
+ with python and machine learning 
+being able to select currencies and display Cost per nm with streamlit library
+practical example of how to create airplane calculator dashoard
+ that will consist of Add Aircraft to Session to pull in addition
+aircraft for comparison and has Save Session to store this 
+report on your ACC dashboard and return later and being able to 
+show selected aircraft,including passenger capacity,
+normal cruise speed, average pre-owned price and must be able to click Load Default
+ to revert to ACC's default values and override inputted.it must be able to 
+choose from a global list of currencies.it must be able to calculate
+cost per nm. below are dataset 
+==========================================================================================
+
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+import streamlit as st
+
+data = {
+    "airlines": ["alaska airlines", "allegiant air", "american airlines", "avelo airlines", "breeze airways"],
+    "Year": [1932, 1997, 1926, 1987, 2018],
+    "avg_pre_owned_price": [5000, 6000, 7000, 8000, 10000]
+}
+
+df = pd.DataFrame(data)
+
+X = df[['Year', 'avg_pre_owned_price']]
+y = df['Year'] * df['avg_pre_owned_price']  # Assume Total Cost is age * avg_pre_owned_price
+
+model = LinearRegression()
+model.fit(X, y)
+
+def convert_currency(total_cost, currency):
+    exchange_rates = {
+        "USD": 1,  # Assuming USD is the base currency
+        "GBP": 0.72,  # Example exchange rate, modify accordingly
+        "CAD": 1.2,  # Example exchange rate, modify accordingly
+        "AUD": 1.3,  # Example exchange rate, modify accordingly
+    }
+    return total_cost * exchange_rates[currency]
+
+currencies = {
+    "USD": {"country": "United States", "logo": "🇺🇸"},
+    "GBP": {"country": "United Kingdom", "logo": "🇬🇧"},
+    "CAD": {"country": "Canada", "logo": "🇨🇦"},
+    "AUD": {"country": "Australia", "logo": "🇦🇺"},
+}
+
+def main():
+    st.title("Flight Cost per nm Calculator")
+
+    st.header("Select Currency")
+    selected_currency = st.selectbox("Select currency:", list(currencies.keys()), format_func=lambda currency: f"{currency} {currencies[currency]['logo']}")
+
+    st.header("Enter Distance in nm")
+    distance = st.number_input("Distance in nm:", value=1000)
+
+    st.header("Enter Age and Average Pre-owned Price")
+    age = st.number_input("Year:", value=2000)
+    avg_pre_owned_price = st.number_input("Average Pre-owned Price:", value=5000)
+
+    total_cost = age * avg_pre_owned_price
+    converted_cost = convert_currency(total_cost, selected_currency)
+    cost_per_nm = converted_cost / distance
+
+    st.subheader("Results")
+    st.write(f"Total Cost: {converted_cost} {selected_currency} {currencies[selected_currency]['logo']}")
+    st.write(f"Cost per nm: {cost_per_nm} {selected_currency} {currencies[selected_currency]['logo']}")
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,9 @@
+AIRLINES,           Year,     avg-pre-owned price 
+alaska airlines,    1932,   5000,
+allegiant air,      1997,    6000,
+american airlines , 1926,    7000,
+avelo airlines ,    1987,    8000,
+breeze airways ,    2018,    10000,
+
+
+Cost per nm = Total Cost / Distance in nm
